@@ -8,13 +8,11 @@ const generateId = () => {
   return randomId
 }
 
-blogsRouter.get('/', (req, res) => res.send('Hello World!'))
-
-//blogsRouter.get('/', (request, response) => {
-//  Blog.find({}).then(blogs => {
-//    response.json(blogs.map(blog => blog.toJSON()))
-//  })
-//})
+blogsRouter.get('/', (request, response) => {
+  Blog.find({}).then(blogs => {
+    response.json(blogs.map(blog => blog.toJSON()))
+  })
+})
 
 blogsRouter.get('/:id', (request, response, next) => {
   Blog.findById(request.params.id)
