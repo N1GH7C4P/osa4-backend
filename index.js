@@ -9,7 +9,6 @@ const blogsRouter = require('./controllers/blogs')
 app.listen(config.PORT, () => {
   console.log(`Server running on port ${config.PORT}`)
 })
-
 app.use(express.static('build'))
 app.use(bodyParser.json())
 app.use(cors())
