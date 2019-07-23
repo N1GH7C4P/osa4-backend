@@ -18,19 +18,23 @@
     "react-time": "^4.3.0"
   },
   "scripts": {
+    "start": "cross-env NODE_ENV=production node index.js",
+    "watch": "cross-env NODE_ENV=development nodemon index.js",
     "build:ui": "del /f build && cd .. && cd frontend && npm run build && copy build ../backend",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
-    "start": "node index.js",
-    "test": "echo \\\"Error: no test specified\\\" && exit 1",
-    "watch": "nodemon index.js",
     "deploy": "git push heroku master",
     "logs:prod": "heroku logs --tail",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
   },
   "author": "Kimmo",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^6.0.1",
+    "jest": "^24.8.0",
     "nodemon": "^1.19.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
