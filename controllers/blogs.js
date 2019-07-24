@@ -8,49 +8,48 @@ const generateId = () => {
   return randomId
 }
 
-blogsRouter.get('/', (request, response) => {
-  Blog.find({}).then(blogs => {
+blogsRouter.get('/', async (request, response) => {
+  const blogs = await Blog.find({})
     response.json(blogs.map(blog => blog.toJSON()))
   })
+
+blogsRouter.get('/:id', async (request, response, next) => {
+  try{
+    const blog = await Blog.findById(request.params.id)
+    if (blog) {
+      response.json(blog.toJSON())
+    } else {
+      response.status(404).end()
+    }
+  } catch(exception) {
+    next(exception)
+  }
 })
 
-blogsRouter.get('/:id', (request, response, next) => {
-  Blog.findById(request.params.id)
-    .then(blog => {
-      if (blog) {
-        response.json(blog.toJSON())
-      } else {
-        response.status(404).end()
-      }
-    })
-    .catch(error => next(error))
-})
-
-blogsRouter.post('/', (request, response, next) => {
+blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
   const blog = new Blog({
-
     id:generateId,
     title:body.title,
     author:body.author,
     url:body.url,
-    likes:body.likes
-    
+    likes:body.likes === undefined ? 0 : body.likes
   })
-
-  blog.save()
-    .then(savedblog => {
-      response.json(savedblog.toJSON())
-    })
-    .catch(error => next(error))
+  try {
+      const savedBlog = await blog.save()
+      response.json(savedBlog.toJSON())
+  } catch(exception){    
+      next(exception)  
+  }
 })
 
-blogsRouter.delete('/:id', (request, response, next) => {
-  Blog.findByIdAndRemove(request.params.id)
-    .then(() => {
-      response.status(204).end()
-    })
-    .catch(error => next(error))
+blogsRouter.delete('/:id', async (request, response, next) => {
+  try {
+    await Blog.findByIdAndRemove(request.params.id)
+    response.status(204).end()
+  } catch (exception) {
+    next(exception)
+  }
 })
 
 blogsRouter.put('/:id', (request, response, next) => {
