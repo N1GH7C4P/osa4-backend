@@ -50,7 +50,6 @@ blogsRouter.post('/', async (request, response, next) => {
       }
 
     const user = await User.findById(decodedToken.id)
-    const user = await User.findById(body.userId)
     const blog = new Blog({
       id:generateId,
       title:body.title,
@@ -59,7 +58,7 @@ blogsRouter.post('/', async (request, response, next) => {
       likes:body.likes === undefined ? 0 : body.likes,
       user: user._id
     })
-    
+
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
