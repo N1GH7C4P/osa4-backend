@@ -2,23 +2,28 @@ const Blog = require('../models/blog')
 
 const initialBlogs = [
     {
-      title: 'soinin ploki',
-      author: 'soini,',
-      likes: '3',
-      url: 'www.ploki.fi'
+        title: 'soinin ploki',
+        author: 'soini,',
+        likes: 3,
+        url: 'www.ploki.fi'
     },
     {
-      title: 'väyskän bloki',
-      author: 'väyrynen',
-      likes: '2',
-      url: 'www.bloki.fi'
+        title: 'väyskän bloki',
+        author: 'väyrynen',
+        likes: 2,
+        url: 'www.bloki.fi'
     },
     {
         title: 'ploki ilman tykkäyksiä',
         author: 'seppo',
-        url: 'www.seponbloki.fi'
+        url: 'www.seponbloki.fi',
     },
   ]
+
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map(u => u.toJSON())
+}
 
 const nonExistingId = async () => {
   const blog = new Blog({ title: 'willremovethissoon' })
@@ -33,5 +38,5 @@ const blogsInDb = async () => {
 }
 
 module.exports = {
-  initialBlogs, nonExistingId, blogsInDb
+  initialBlogs, nonExistingId, blogsInDb, usersInDb
 }

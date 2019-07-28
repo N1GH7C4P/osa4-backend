@@ -4,6 +4,7 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
+const User = require('../models/user')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -12,6 +13,9 @@ beforeEach(async () => {
   await blogObject.save()
 
   blogObject = new Blog(helper.initialBlogs[1])
+  await blogObject.save()
+
+  blogObject = new Blog(helper.initialBlogs[2])
   await blogObject.save()
 })
 
@@ -69,6 +73,18 @@ test('a valid blog can be added ', async () => {
     )
 })
 
+test('blog without title or author gets status 400 bad request', async () => {
+    const newBlog = {
+        likes: '5',
+        url: 'www.blogi.fi'
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+})
+
+
 test('blog without title is not added', async () => {
     const newBlog = {
         author: 'paavo'
@@ -109,6 +125,56 @@ expect(blogsAtEnd.length).toBe(
 const title = blogsAtEnd.map(r => r.title)
 
 expect(title).not.toContain(blogToDelete.title)
+})
+
+describe('when there is initially one user at db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+    const user = new User({ username: 'root', password: 'sekret' })
+    await user.save()
+  })
+
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'mluukkai',
+      name: 'Matti Luukkainen',
+      password: 'salainen',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd.length).toBe(usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    expect(usernames).toContain(newUser.username)
+  })
+  test('creation fails with proper statuscode and message if username already taken', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'root',
+      name: 'Superuser',
+      password: 'salainen',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('`username` to be unique')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
+  })
 })
 
 
