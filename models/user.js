@@ -24,7 +24,7 @@ userSchema.set('toJSON', {
   }
 })
 
-userSchema.plugin(uniqueValidator)
+userSchema.plugin(uniqueValidator, { message: 'Error, expected username to be unique.' });
 const User = mongoose.model('User', userSchema)
 
 module.exports = User

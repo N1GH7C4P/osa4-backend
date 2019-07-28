@@ -21,7 +21,7 @@ blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
     .find({}).populate('user', { username: 1, name: 1 })
 
-  response.json(notes.map(note => note.toJSON()))
+  response.json(blogs.map(b => b.toJSON()))
 });
 
 blogsRouter.get('/:id', async (request, response, next) => {
