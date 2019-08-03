@@ -1,17 +1,5 @@
 const mongoose = require('mongoose')
-const config = require('../utils/config')
-const logger = require('../utils/logger')
-
-const url = config.MONGODB_URI
-logger.info('connecting to', config.MONGODB_URI)
-
-mongoose.connect(url, { useNewUrlParser: true })
-    .then(result => {
-        logger.info('connected to MongoDB')
-    })
-    .catch((error) => {
-        logger.info('error connecting to MongoDB:', error.message)
-    })
+const uniqueValidator = require('mongoose-unique-validator')
 
 const blogSchema = new mongoose.Schema({
   title: {
@@ -35,6 +23,8 @@ const blogSchema = new mongoose.Schema({
     ref: 'User'
   }
 })
+
+blogSchema.plugin(uniqueValidator)
 
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
