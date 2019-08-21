@@ -2,7 +2,7 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
-// ...
+
 const getTokenFrom = request => {
   const authorization = request.get('authorization')  
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
@@ -38,7 +38,7 @@ blogsRouter.post('/', async (request, response, next) => {
     })  
 
       const savedBlog = await blog.save()
-      user.blogs = user.blogs.concat(savedblog._id)    
+      user.blogs = user.blogs.concat(savedBlog._id)    
       await user.save()
       response.json(savedBlog.toJSON())
   } catch(exception){    

@@ -7,6 +7,7 @@
     "bcrypt": "^3.0.6",
     "cors": "^2.8.5",
     "cross-env": "^5.2.0",
+    "csstools": "^0.1.5",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "heroku": "^7.26.2",
@@ -24,8 +25,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "watch": "cross-env NODE_ENV=development nodemon index.js",
-    "build:ui": "del /f build && cd .. && cd frontend && npm run build && copy build ../backend",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
+    "build:ui": "rm -rf build && cd ../../osa4/frontend && npm run build --prod && cp -r build ../../osa4/backend/",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
     "deploy": "git push heroku master",
     "logs:prod": "heroku logs --tail",
     "lint": "eslint .",
